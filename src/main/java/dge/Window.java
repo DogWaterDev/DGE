@@ -25,9 +25,9 @@ public class Window {
         this.width = 1920;
         this.height = 1080;
         this.title = "0.1 SNAPSHOT";
-        r = 1;
-        g = 1;
-        b = 1;
+        r = 0;
+        g = 0;
+        b = 0;
         a = 0;
 
     }
@@ -100,11 +100,6 @@ public class Window {
         // Enable v-sync
         glfwSwapInterval(1);
 
-        // tell GL to only draw onto a pixel if the shape is closer to the viewer
-        glEnable(GL_DEPTH_TEST); // enable depth-testing
-        glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
-
-
         // Now that window is created, make it visible
         glfwShowWindow(glfwWindow);
 
@@ -112,7 +107,7 @@ public class Window {
         // that is managed externally.
         // LWJGL detects the context that is current in the current thread,
         // creates the GLCapabilities instance and makes the OpenGL bindings available for use.
-        // DO NOT REMOVE THIS FUCKING LINE
+        // DO NOT REMOVE THIS F***ING LINE
         GL.createCapabilities();
 
 
