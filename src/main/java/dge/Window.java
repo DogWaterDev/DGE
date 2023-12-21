@@ -5,6 +5,8 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import util.Time;
 
+import java.nio.IntBuffer;
+
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -27,7 +29,10 @@ public class Window {
         g = 1;
         b = 1;
         a = 0;
+
     }
+
+
 
     public static void changeScene(int newScene) {
         switch(newScene) {
@@ -74,7 +79,7 @@ public class Window {
         // Configure GLFW
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE,GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
         // actually create the window
@@ -95,6 +100,11 @@ public class Window {
         // Enable v-sync
         glfwSwapInterval(1);
 
+        // tell GL to only draw onto a pixel if the shape is closer to the viewer
+        glEnable(GL_DEPTH_TEST); // enable depth-testing
+        glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+
+
         // Now that window is created, make it visible
         glfwShowWindow(glfwWindow);
 
@@ -104,6 +114,7 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL bindings available for use.
         // DO NOT REMOVE THIS FUCKING LINE
         GL.createCapabilities();
+
 
         Window.changeScene(0);
     }
@@ -125,7 +136,7 @@ public class Window {
 
             glfwSwapBuffers(glfwWindow);
             endTime = Time.getTime();
-            dt = endTime  - beginTime;
+            dt = endTime - beginTime;
             beginTime = endTime;
         }
     }
