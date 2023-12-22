@@ -32,7 +32,6 @@ public class LevelScene extends Scene{
 
         } else if (changingScene) {
             Window.changeScene(0);
-            Window.get().r = 1.0f;
 
 
         }
