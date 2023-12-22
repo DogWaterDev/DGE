@@ -16,6 +16,7 @@ void main()
 #type fragment
 #version 330 core
 uniform float uTime;
+uniform sampler2D TEX_SAMPLER;
 
 in vec4 fColor;
 

@@ -3,6 +3,7 @@ package dge;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import renderer.Shader;
+import renderer.Texture;
 import util.Time;
 
 import java.awt.event.KeyEvent;
@@ -39,18 +40,13 @@ public class LevelEditorScene extends Scene{
     private int vertexID, fragmentID, shaderProgram;
 
     private float[] vertexArray = {
-            // position         // color
             // NORMALIZED DEVICE COORDINATES
-            50.5f, -50.5f,  0.0f,   1.0f, 0.0f, 0.0f, 1.0f, // bottom right 0
-            -50.5f, 50.5f,  0.0f,   0.0f, 1.0f, 0.0f, 1.0f, // top left 1
-            50.5f, 50.5f,   0.0f,   0.0f, 0.0f, 1.0f, 1.0f, // top right 2
-            -50.5f, -50.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f // bottom left 3
-             /*0.8f, -0.6f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f, // bottom right 0
-             -0.8f, 0.4f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f, // top left 1
-              0.8f, 0.4f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f, // top right 2
-            -0.8f, -0.6f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f, // bottom left 3
-              0.4f, 0.6f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f, // top right (kinda) 4
-             -0.4f, 0.6f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f, // top left (kinda) 5*/
+            // position              color                    UV
+
+            50.5f, -50.5f,  0.0f,   1.0f, 0.0f, 0.0f, 1.0f,     1, 0, // bottom right 0
+            -50.5f, 50.5f,  0.0f,   0.0f, 1.0f, 0.0f, 1.0f,     0, 1, // top left 1
+            50.5f, 50.5f,   0.0f,   0.0f, 0.0f, 1.0f, 1.0f,     1, 1, // top right 2
+            -50.5f, -50.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,     0, 0 // bottom left 3
 
     };
 
@@ -64,10 +60,6 @@ public class LevelEditorScene extends Scene{
     private int[] elementArray = {
             2, 1, 0, // top right triangle
             0, 1, 3
-            /*2, 3, 0,
-            4, 3, 2,
-            4, 5, 3,
-            5, 1, 3*/
     };
 
 
@@ -76,9 +68,10 @@ public class LevelEditorScene extends Scene{
 
     private int vaoID, vboID, eboID;
     private Shader defaultShader;
+    private Texture testTexture;
     public LevelEditorScene() {
         System.out.println("Inside level editor scene");
-        x`defaultShader = new Shader("assets/shaders/default.glsl"); // use this normally
+        defaultShader = new Shader("assets/shaders/new.glsl"); // use this normally
         //defaultShader = new Shader("assets/shaders/grayscale.glsl"); // this just changes everything to grayscale
         defaultShader.compile();
 
@@ -87,6 +80,7 @@ public class LevelEditorScene extends Scene{
     @Override
     public void init() {
 
+        this.testTexture = new Texture("assets/images/testImage.jpg");
         this.camera = new Camera(new Vector2f());
 
         // GENERATE VAO, VBO, EBO buffer objects and send them to the GPU
@@ -113,15 +107,17 @@ public class LevelEditorScene extends Scene{
         // add the vertex attribute pointers
         int positionsSize = 3;
         int colorSize = 4;
-        int floatSizeBytes = 4;
-        int vertexSizeBytes = (positionsSize + colorSize) * floatSizeBytes;
+        int uvSize = 2;
+        int floatSizeBytes = Float.BYTES;
+        int vertexSizeBytes = (positionsSize + colorSize + uvSize) * floatSizeBytes;
         glVertexAttribPointer(0, positionsSize, GL_FLOAT, false, vertexSizeBytes, 0);
         glEnableVertexAttribArray(0);
 
         glVertexAttribPointer(1, colorSize, GL_FLOAT, false, vertexSizeBytes, (positionsSize * floatSizeBytes));
         glEnableVertexAttribArray(1);
 
-
+        glVertexAttribPointer(2, uvSize, GL_FLOAT, false, vertexSizeBytes, (positionsSize + colorSize) * floatSizeBytes);
+        glEnableVertexAttribArray(2);
     }
 
     @Override
@@ -158,7 +154,13 @@ public class LevelEditorScene extends Scene{
             camera.getPosition().x -= dt * speed;
         }
 
+
         defaultShader.use();
+        // texture stuff
+        defaultShader.uploadTexture("TEX-SAMPLER", 0);
+        glActiveTexture(GL_TEXTURE0);
+        testTexture.bind();
+        //camera stuff
         defaultShader.uploadMat4f("uProjection", camera.getProjectionMatrix());
         defaultShader.uploadMat4f("uView", camera.getViewMatrix());
         defaultShader.uploadFloat("uTime", Time.getTime());

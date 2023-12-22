@@ -86,7 +86,7 @@ public class Shader {
             int len = glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH);
             System.out.println("ERROR: '" + filepath + "'\n\tFragment shader compilation failed.");
             System.out.println(glGetShaderInfoLog(fragmentID, len));
-            assert false: "";
+            assert false : "";
         }
         // Link shaders and check for errors
         shaderProgramID = glCreateProgram();
@@ -116,6 +116,7 @@ public class Shader {
     }
 
     public void detach() {
+        // what do you think this is going to do? why are you reading this?
         glUseProgram(0);
         beingUsed = false;
     }
@@ -163,5 +164,11 @@ public class Shader {
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
         use();
         glUniform1i(varLocation, val);
+    }
+
+    public void uploadTexture(String varName, int slot) {
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
+        glUniform1i(varLocation, slot);
     }
 }
