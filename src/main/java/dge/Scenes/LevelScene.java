@@ -1,4 +1,7 @@
-package dge;
+package dge.Scenes;
+
+import dge.Listeners.KeyListener;
+import dge.Window;
 
 import java.awt.event.KeyEvent;
 import java.nio.IntBuffer;
